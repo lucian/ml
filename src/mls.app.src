@@ -1,6 +1,6 @@
 {application, mls,
  [{description, "Multi-line strings like support for Erlang"},
-  {vsn, "0.1.1"},
+  {vsn, "0.1.3"},
   {registered, []},
   {applications,
    [kernel,

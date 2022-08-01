@@ -6,14 +6,30 @@ Multi-line strings like support for Erlang
 Install
 =======
 
-add to `rebar.config`:
+Resources:
+ - [hex](https://hex.pm/packages/mls)
+ - [sources- GitHub](https://github.com/lucian/mls)
+ - [docs](https://hexdocs.pm/mls/readme.html)
 
-    {mls, "0.1.0"}
+Build:
 
-Build
------
+     rebar3 compile
 
-    $ rebar3 compile
+
+Run unit testing:
+
+     rebar3 eunit
+
+
+Include `mls` as dependency in your project in `rebar.config`:
+
+```
+{deps, [
+    ....
+    {mls, "0.1.3"}
+]}.
+
+```
 
 Usage
 -----
