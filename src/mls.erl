@@ -33,6 +33,9 @@ text(Options, T) when is_list(T) ->
   text_parse(Type, Is_flat, Is_escaped, T).
 
 % Thpe, Is_flat, Is_escaped
+text_parse(list, false, false, T) ->
+  text(list, false, false, T);
+
 text_parse(list, false, true, T) ->
   text(list, false, true, T);
 

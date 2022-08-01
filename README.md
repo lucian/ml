@@ -26,7 +26,7 @@ Include `mls` as dependency in your project in `rebar.config`:
 ```
 {deps, [
     ....
-    {mls, "0.1.3"}
+    {mls, "0.1.4"}
 ]}.
 
 ```
@@ -43,7 +43,7 @@ with other implementations, but we don't have to.
 
     function  | parameters
     ----------+----------------
-    text/1    | (Text)           | equivalent to mls:text(binary)
+    text/1    | (Text)
     text/2    | (Options, Text)
 
     Option can be one of

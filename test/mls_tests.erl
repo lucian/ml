@@ -166,3 +166,17 @@ sql_pgsql_query_test() ->
 
   Expected_query = "SELECT * FROM Customers WHERE NOT Country='Germany' AND NOT Country=$1;",
   ?assertEqual(Expected_query, Query).
+
+
+list_no_flat_no_escape_test() ->
+  Query = mls:text([list],
+            """
+            SELECT * FROM Customers
+            WHERE
+               NOT Country='Germany'
+               AND NOT Country=$1;
+            """
+                  ),
+
+  Expected_query = "SELECT * FROM Customers\nWHERE\n   NOT Country='Germany'\n   AND NOT Country=$1;\n",
+  ?assertEqual(Expected_query, Query).
