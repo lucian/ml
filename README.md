@@ -60,6 +60,8 @@ with other implementations, but we don't have to.
 
 ### Examples
 
+- see [Examples in Livebook Notebook](./examples.livemd)
+
 ```
 1> mls:text("
 1>   line1

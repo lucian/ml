@@ -1,0 +1,407 @@
+<!-- livebook:{"default_language":"erlang","persist_outputs":true} -->
+
+# erlang multiline examples
+
+```elixir
+Mix.install([
+  {:mls, "~> 0.1.4"},
+  {:bbmustache, "~> 1.12"},
+  {:jsx, "~> 3.1"}
+])
+```
+
+## multiline text examples
+
+```erlang
+HLine = fun () -> io:format("~n-----------------------------~n~n") end.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Fun<erl_eval.43.105768164>
+```
+
+```erlang
+%% simple multiline text
+
+Text_1 = "
+  line_1
+    line_2
+      line_3
+  ",
+
+Text_2 = 
+  "
+  line_1
+    line_2
+      line_3
+  ",
+
+Text_3 = """
+  line_1
+    line_2
+      line_3
+  """,
+
+Text_4 =
+  """
+  line_1
+    line_2
+      line_3
+  """,
+
+Text_1_mls = mls:text(Text_1),
+io:format("Text_1 multiline as data:~n~p~n~n", [Text_1_mls]),
+io:format("Text_1 multiline as string:~n~s", [Text_1_mls]),
+HLine(),
+
+Text_2_mls = mls:text(Text_2),
+io:format("Text_2 multiline as data:~n~p~n~n", [Text_2_mls]),
+io:format("Text_2 multiline as string:~n~s", [Text_2_mls]),
+HLine(),
+
+Text_3_mls = mls:text(Text_3),
+io:format("Text_3 multiline as data:~n~p~n~n", [Text_3_mls]),
+io:format("Text_3 multiline as string:~n~s", [Text_3_mls]),
+HLine(),
+
+Text_4_mls = mls:text(Text_4),
+io:format("Text_4 multiline as data:~n~p~n~n", [Text_4_mls]),
+io:format("Text_4 multiline as string:~n~s", [Text_4_mls]),
+
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Text_1 multiline as data:
+<<"line_1\n  line_2\n    line_3\n">>
+
+Text_1 multiline as string:
+line_1
+  line_2
+    line_3
+
+-----------------------------
+
+Text_2 multiline as data:
+<<"line_1\n  line_2\n    line_3\n">>
+
+Text_2 multiline as string:
+line_1
+  line_2
+    line_3
+
+-----------------------------
+
+Text_3 multiline as data:
+<<"line_1\n  line_2\n    line_3\n">>
+
+Text_3 multiline as string:
+line_1
+  line_2
+    line_3
+
+-----------------------------
+
+Text_4 multiline as data:
+<<"line_1\n  line_2\n    line_3\n">>
+
+Text_4 multiline as string:
+line_1
+  line_2
+    line_3
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
+
+```erlang
+Text_5_mls = mls:text(
+  "
+  -------------------------
+  1: line_1
+  2:  line_2
+  3:    line_3
+  4: line_4
+  ------------------------
+  "),
+
+io:format("Text_5 multiline as data:~n~p~n~n", [Text_5_mls]),
+io:format("Text_5 multiline as string:~n~s", [Text_5_mls]),
+
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Text_5 multiline as data:
+<<"-------------------------\n1: line_1\n2:  line_2\n3:    line_3\n4: line_4\n------------------------\n">>
+
+Text_5 multiline as string:
+-------------------------
+1: line_1
+2:  line_2
+3:    line_3
+4: line_4
+------------------------
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
+
+## Escaping in multiline text
+
+```erlang
+JSON = mls:text([escaped],
+  "
+  {
+    'a': 1,
+    'b': 2
+  }
+  "),
+
+Json_decoded_map = jsx:decode(JSON, [return_maps]),
+
+
+io:format("JSON binary, escaped as data:~n~p~n~n", [JSON]),
+io:format("JSON binary, escaped as string:~n~s~n", [JSON]),
+io:format("JSON jsx:decode:~n~p", [Json_decoded_map]),
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+JSON binary, escaped as data:
+<<"{\n  \"a\": 1,\n  \"b\": 2\n}\n">>
+
+JSON binary, escaped as string:
+{
+  "a": 1,
+  "b": 2
+}
+
+JSON jsx:decode:
+#{<<"a">> => 1,<<"b">> => 2}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
+
+## Using multiline text in mustache templates
+
+```erlang
+%% json template
+Json_template = mls:text([escaped], 
+    "
+    {
+      'a': 1,
+      'b': {{n}}
+    }
+    "),
+
+Json_rendered = bbmustache:render(Json_template, #{"n" => 2}),
+
+io:format("Json_template escaped as data:~n~p~n~n", [Json_template]),
+io:format("Json_template escaped as string:~n~s~n", [Json_template]),
+io:format("Json rendered as data:~n~p~n~n", [Json_rendered]),
+io:format("Json rendered as string:~n~s", [Json_rendered]),
+
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Json_template escaped as data:
+<<"{\n  \"a\": 1,\n  \"b\": {{n}}\n}\n">>
+
+Json_template escaped as string:
+{
+  "a": 1,
+  "b": {{n}}
+}
+
+Json rendered as data:
+<<"{\n  \"a\": 1,\n  \"b\": 2\n}\n">>
+
+Json rendered as string:
+{
+  "a": 1,
+  "b": 2
+}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
+
+```erlang
+%% markdown template
+Markdown_template = mls:text(
+  """
+  Header 1
+  =========================
+  
+  Examples:
+    - _Key 1:_ **{{value1}}**
+    - _Key 2:_ **{{value2}}**
+  """
+),
+
+Markdown_data = #{"value1" => "Value 1", "value2" => "Value 2"},
+
+Markdown = bbmustache:render(Markdown_template, Markdown_data),
+
+io:format("Markdown_template escaped as data:~n~p~n~n", [Markdown_template]),
+io:format("Markdown_template escaped as string:~n~s~n", [Markdown_template]),
+io:format("Markdown rendered as data:~n~p~n~n", [Markdown]),
+io:format("Markdown rendered as string:~n~s", [Markdown]),
+
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Markdown_template escaped as data:
+<<"Header 1\n=========================\n\nExamples:\n  - _Key 1:_ **{{value1}}**\n  - _Key 2:_ **{{value2}}**\n">>
+
+Markdown_template escaped as string:
+Header 1
+=========================
+
+Examples:
+  - _Key 1:_ **{{value1}}**
+  - _Key 2:_ **{{value2}}**
+
+Markdown rendered as data:
+<<"Header 1\n=========================\n\nExamples:\n  - _Key 1:_ **Value 1**\n  - _Key 2:_ **Value 2**\n">>
+
+Markdown rendered as string:
+Header 1
+=========================
+
+Examples:
+  - _Key 1:_ **Value 1**
+  - _Key 2:_ **Value 2**
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
+
+```erlang
+%% SQL example - multline as list, flat
+SQL_query = 
+  """
+  SELECT * FROM Customers
+  WHERE
+  NOT Country='Romania'
+  AND NOT Country=$1;
+  """,
+
+SQL_query_mls = mls:text(SQL_query),
+SQL_query_mls_flat = mls:text([list,flat], SQL_query),
+
+io:format("SQL query:~n~p~n~n", [SQL_query]),
+io:format("SQL query multline as data:~n~p~n~n", [SQL_query_mls]),
+io:format("SQL query multline as string:~n~s~n", [SQL_query_mls]),
+
+io:format("SQL query multline list, flat as data:~n~p~n~n", [SQL_query_mls_flat]),
+
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+SQL query:
+"\n  SELECT * FROM Customers\n  WHERE\n  NOT Country='Romania'\n  AND NOT Country=$1;\n  "
+
+SQL query multline as data:
+<<"SELECT * FROM Customers\nWHERE\nNOT Country='Romania'\nAND NOT Country=$1;\n">>
+
+SQL query multline as string:
+SELECT * FROM Customers
+WHERE
+NOT Country='Romania'
+AND NOT Country=$1;
+
+SQL query multline list, flat as data:
+"SELECT * FROM Customers WHERE NOT Country='Romania' AND NOT Country=$1;"
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
+
+```erlang
+%% SQL Templates with mustache
+
+SQL_query_template = mls:text(
+  """
+  SELECT * FROM Customers
+  WHERE
+  NOT Country={{country}}
+  AND NOT Country=$1;
+  """),
+
+SQL_data = #{"country" => "Romania"},
+
+SQL_query_rendered = bbmustache:render(SQL_query_template, SQL_data),
+
+
+io:format("SQL query template as data:~n~p~n~n", [SQL_query_template]),
+io:format("SQL query template as string:~n~s~n~n", [SQL_query_template]),
+
+io:format("SQL query rendered as string:~n~s", [SQL_query_rendered]),
+
+ok.
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+SQL query template as data:
+<<"SELECT * FROM Customers\nWHERE\nNOT Country={{country}}\nAND NOT Country=$1;\n">>
+
+SQL query template as string:
+SELECT * FROM Customers
+WHERE
+NOT Country={{country}}
+AND NOT Country=$1;
+
+
+SQL query rendered as string:
+SELECT * FROM Customers
+WHERE
+NOT Country=Romania
+AND NOT Country=$1;
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ok
+```
